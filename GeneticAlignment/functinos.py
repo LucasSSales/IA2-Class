@@ -44,8 +44,8 @@ def getValue(pop):
     for i in pop:
         for j in range(len(i)):
             if i[j] != '-':
-                if i[j] not in values[j]:
-                    values[j][i[j]] = 1
+                if i[j] not in values[j].keys():
+                    values[j][i[j]] = 0
                 else: values[j][i[j]] += 1
     total = 0
     for i in values:
@@ -53,4 +53,4 @@ def getValue(pop):
     return total
 
 def sortarg(i):
-    return i[1]
+    return i[0]
