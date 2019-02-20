@@ -23,12 +23,14 @@ def make_maze(w = 16, h = 8):
     for (a, b) in zip(hor, ver):
         s += ''.join(a + ['\n'] + b + ['\n'])
     s = s.split('\n')
+
     maze = []
     for i in s:
         line = []
         for j in i:
             if j == ' ':line.append(0)
             else: line.append(1)
+        line.append(1)
         maze.append(line)
     maze.pop(-1)
     maze.pop(-1)
