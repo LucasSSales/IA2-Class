@@ -8,4 +8,4 @@ class State(Enum):
 
 class AgentState(Enum):
     SEARCH = 0
-    STAL = 1
+    STALk = 1

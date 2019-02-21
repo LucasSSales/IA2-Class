@@ -1,6 +1,6 @@
 import arcade
 from maze import make_maze
-from states import State
+from states import State, AgentState
 from random import randint
 from agents import Player, Gosth, Coin
 
@@ -15,8 +15,6 @@ class MyGame(arcade.Window):
         super().__init__(width, height, title)
         self.size_block = 20
         self.maze = make_maze(width//(self.size_block*3), height//(self.size_block*2))
-        self.time = 0
-        self.enimes_movs = 0
         self.agents = []
         self.coins = []
         self.player = None
@@ -24,6 +22,8 @@ class MyGame(arcade.Window):
 
     def setup(self):
         # Create your sprites and sprite lists here
+        self.agents = []
+        self.coins = []
         self.state = State.MAIN_MENU
         for i in range(len(self.maze)):
             for j in range(len(self.maze[0])):
@@ -50,7 +50,7 @@ class MyGame(arcade.Window):
         for i in range(len(self.maze)):
             for j in range(len(self.maze[0])):
                 if self.maze[i][j] == 1:
-                    arcade.draw_point(j*self.size_block, i*self.size_block, arcade.color.BLUE_BELL, self.size_block)
+                    arcade.draw_point(j*self.size_block, i*self.size_block, arcade.color.BLUE, self.size_block)
 
     def on_draw(self):
         """
@@ -69,7 +69,8 @@ class MyGame(arcade.Window):
             for i in self.agents:
                 i.drawn()
             self.player.drawn()
-            
+        if self.state == State.GAME_OVER:
+            arcade.draw_text("Press ENTER to play Agin", 3, 405, arcade.color.BLACK, 50)
 
         # Call draw() on all your sprite lists below
 
@@ -83,7 +84,11 @@ class MyGame(arcade.Window):
 
         for i in self.agents:
             if i.x == self.player.x and i.y == self.player.y:
-                self.state = State.MAIN_MENU
+                self.state = State.GAME_OVER
+                break
+            if ( (i.x - self.player.x)**2 + (i.y - self.player.y)**2 )**1/2 > 5:
+                i.stalk(self.player.x, self.player.y)
+
             i.time += delta_time
             if i.time >= 0.75:
                 if i.move(self.maze):
@@ -105,6 +110,11 @@ class MyGame(arcade.Window):
 
         if key == arcade.key.SPACE and self.state == State.MAIN_MENU:
             # If the game is starting, just change the state and return
+            self.state = State.PLAYING
+            return
+        if key == arcade.key.SPACE and self.state == State.GAME_OVER:
+            # If the game is starting, just change the state and return
+            self.setup()
             self.state = State.PLAYING
             return
         

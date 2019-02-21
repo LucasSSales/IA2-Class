@@ -44,7 +44,7 @@ class Gosth:
         self.scale = scale
         self.size = size
         self.time = 0
-        self.path = None
+        self.target = None
         self.state = AgentState.SEARCH
 
     def move(self, coordinates):
@@ -72,7 +72,12 @@ class Gosth:
     def getMoviment(self):
         if self.state == AgentState.SEARCH:
             return random.randint(0, 5)
-        
+        if self.state == AgentState.STALk:pass
+
+    def stalk(self, x, y):
+        self.state == AgentState.STALk
+        self.target = (x, y)
+
     def drawn(self):
         arcade.draw_circle_filled(self.x*self.scale, self.y*self.scale, self.size, arcade.color.GREEN)
 
@@ -85,4 +90,4 @@ class Coin:
         self.time = 0
         
     def drawn(self):
-        arcade.draw_circle_filled(self.x*self.scale, self.y*self.scale, self.size, arcade.color.WHITE)
+        arcade.draw_circle_filled(self.x*self.scale, self.y*self.scale, self.size, arcade.color.YELLOW)
