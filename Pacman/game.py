@@ -2,7 +2,7 @@ import arcade
 from maze import make_maze
 from states import State
 from random import randint
-from agents import Player, Gosth
+from agents import Player, Gosth, Coin
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -18,13 +18,26 @@ class MyGame(arcade.Window):
         self.time = 0
         self.enimes_movs = 0
         self.agents = []
+        self.coins = []
+        self.player = None
         
 
     def setup(self):
         # Create your sprites and sprite lists here
         self.state = State.MAIN_MENU
+        for i in range(len(self.maze)):
+            for j in range(len(self.maze[0])):
+                if self.maze[i][j] == 0 and randint(0, 100) > 95:
+                    self.coins.append(Coin(j, i, self.size_block // 5, self.size_block))
+
+        y = randint(0, len(self.maze)-1)
+        x = randint(0, len(self.maze[0])-1)
+        while self.maze[y][x] == 1:
+            y = randint(0, len(self.maze)-1)
+            x = randint(0, len(self.maze[0])-1)
+        self.player = Player(x, y, self.size_block//4, self.size_block)
         arcade.set_background_color(arcade.color.BLACK_OLIVE)
-        for i in range(5):
+        for i in range(10):
             y = randint(0, len(self.maze)-1)
             x = randint(0, len(self.maze[0])-1)
             while self.maze[y][x] == 1:
@@ -51,8 +64,11 @@ class MyGame(arcade.Window):
             arcade.draw_text("Press ENTER to play", 3, 405, arcade.color.BLACK, 50)
         if self.state == State.PLAYING:
             self.drow_maze()
+            for i in self.coins:
+                i.drawn()
             for i in self.agents:
                 i.drawn()
+            self.player.drawn()
             
 
         # Call draw() on all your sprite lists below
@@ -63,13 +79,20 @@ class MyGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        self.time += delta_time
+        self.player.time += delta_time
 
         for i in self.agents:
+            if i.x == self.player.x and i.y == self.player.y:
+                self.state = State.MAIN_MENU
             i.time += delta_time
             if i.time >= 0.75:
                 if i.move(self.maze):
                     i.time = 0
+        for i in range(len(self.coins)):
+            if self.coins[i].x == self.player.x and self.coins[i].y == self.player.y:
+                self.coins.pop(i)
+                self.player.score += 10
+                break
 
 
     def on_key_press(self, key, key_modifiers):
@@ -84,13 +107,26 @@ class MyGame(arcade.Window):
             # If the game is starting, just change the state and return
             self.state = State.PLAYING
             return
+        
+        if self.state == State.PLAYING:
+            if key == arcade.key.D and self.player.time > 0.4:
+                if self.player.move(1, self.maze):
+                    self.player.time = 0
+            if key == arcade.key.A and self.player.time > 0.4:
+                if self.player.move(2, self.maze):
+                    self.player.time = 0
+            if key == arcade.key.W and self.player.time > 0.4:
+                if self.player.move(3, self.maze):
+                    self.player.time = 0
+            if key == arcade.key.S and self.player.time > 0.4:
+                if self.player.move(4, self.maze):
+                    self.player.time = 0
 
 
     def on_key_release(self, key, key_modifiers):
         """
         Called whenever the user lets off a previously pressed key.
         """
-        pass
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """

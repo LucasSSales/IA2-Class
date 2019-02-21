@@ -1,4 +1,4 @@
-from random import shuffle, randrange
+from random import shuffle, randrange, randint
  
 def make_maze(w = 16, h = 8):
     
@@ -34,5 +34,10 @@ def make_maze(w = 16, h = 8):
         maze.append(line)
     maze.pop(-1)
     maze.pop(-1)
+    for i in range(100):
+        y = randint(2, len(maze)-3)
+        x = randint(2, len(maze[0])-3)
+        maze[y][x] = 0
+
     return maze
  
