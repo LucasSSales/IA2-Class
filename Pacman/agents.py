@@ -1,6 +1,7 @@
 import math
 import random
 import arcade
+from heapq import *
 from states import AgentState
 
 class Player:
@@ -9,6 +10,7 @@ class Player:
         self.y = y
         self.scale = scale
         self.time = 0
+        self.path = []
         self.size = size
         self.score = 0
     
@@ -45,6 +47,7 @@ class Gosth:
         self.size = size
         self.time = 0
         self.target = None
+        self.trajecoty = None
         self.state = AgentState.SEARCH
 
     def move(self, coordinates):
@@ -70,13 +73,49 @@ class Gosth:
         return False
         
     def getMoviment(self):
+        if self.state == AgentState.STALk:
+            if not self.trajecoty:
+                self.state = AgentState.SEARCH
+            return self.trajecoty.pop(0)
         if self.state == AgentState.SEARCH:
             return random.randint(0, 5)
-        if self.state == AgentState.STALk:pass
+    def getPath(self, maze):
+        queue = []
+        queue.append([((self.x - self.target[0])**2 + (self.y - self.target[1])**2 )**(1/2), (self.x, self.y), []])
+        while queue:
+            current = heappop(queue)
+            if len(current[2]) >= 3: return current[2]
+            if maze[current[1][1]][current[1][0]+1] == 0: 
+                item = []
+                item.append(((current[1][0] - self.target[0])**2 + (current[1][1] - self.target[1])**2 )**(1/2))
+                item.append((current[1][0]+1, current[1][1]))
+                item.append([i for i in current[2]])
+                item[2].append(1)
+                heappush(queue, item)
+            if maze[current[1][1]][current[1][0]-1] == 0: 
+                item = []
+                item.append(((current[1][0] - self.target[0])**2 + (current[1][1] - self.target[1])**2 )**(1/2))
+                item.append((current[1][0]-1, current[1][1]))
+                item.append([i for i in current[2]])
+                item[2].append(2)
+                heappush(queue, item)
+            if maze[current[1][1]+1][current[1][0]] == 0: 
+                item = []
+                item.append(((current[1][0] - self.target[0])**2 + (current[1][1] - self.target[1])**2 )**(1/2))
+                item.append((current[1][0], current[1][1]+1))
+                item.append([i for i in current[2]])
+                item[2].append(3)
+                heappush(queue, item)
+            if maze[current[1][1]-1][current[1][0]] == 0: 
+                item = []
+                item.append(((current[1][0] - self.target[0])**2 + (current[1][1] - self.target[1])**2 )**(1/2))
+                item.append((current[1][0], current[1][1]-1))
+                item.append([i for i in current[2]])
+                item[2].append(4)
+                heappush(queue, item)
+            
 
-    def stalk(self, x, y):
-        self.state == AgentState.STALk
-        self.target = (x, y)
+
 
     def drawn(self):
         arcade.draw_circle_filled(self.x*self.scale, self.y*self.scale, self.size, arcade.color.GREEN)

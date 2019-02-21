@@ -86,9 +86,12 @@ class MyGame(arcade.Window):
             if i.x == self.player.x and i.y == self.player.y:
                 self.state = State.GAME_OVER
                 break
-            if ( (i.x - self.player.x)**2 + (i.y - self.player.y)**2 )**1/2 > 5:
-                i.stalk(self.player.x, self.player.y)
-
+            if ((i.x - self.player.x)**2 + (i.y - self.player.y)**2 )**(1/2) < 15 and i.state != AgentState.STALk:
+                i.state = AgentState.STALk
+                i.target = (self.player.x, self.player.y)
+                i.trajecoty = i.getPath(self.maze)
+            else :
+                i.state = AgentState.SEARCH
             i.time += delta_time
             if i.time >= 0.75:
                 if i.move(self.maze):
