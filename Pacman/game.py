@@ -57,11 +57,15 @@ class MyGame(arcade.Window):
         Render the screen.
         """
 
-        # This command should happen before we start drawing. It will clear
-        # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
         if self.state == State.MAIN_MENU:
-            arcade.draw_text("Press ENTER to play", 3, 405, arcade.color.BLACK, 50)
+            texture = arcade.load_texture("maze.jpeg")
+            arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT, texture,
+                                          0)
+            arcade.draw_text("PROJETO DE IA2", (SCREEN_WIDTH / 2) - 250, SCREEN_HEIGHT - 60, arcade.color.RED, 50)
+            arcade.draw_text("ALUNOS: Carlos Walter, Lucas Sales", (SCREEN_WIDTH / 2) - 250, SCREEN_HEIGHT - 120,
+                             arcade.color.RED, 25)
+            arcade.draw_text("Press SPACE to play", (SCREEN_WIDTH / 2) - (SCREEN_WIDTH / 4), 305, arcade.color.RED, 50)
         if self.state == State.PLAYING:
             self.drow_maze()
             for i in self.coins:
@@ -70,7 +74,11 @@ class MyGame(arcade.Window):
                 i.drawn()
             self.player.drawn()
         if self.state == State.GAME_OVER:
-            arcade.draw_text("Press ENTER to play Agin", 3, 405, arcade.color.BLACK, 50)
+            texture = arcade.load_texture("gameover.jpg")
+            arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT, texture,
+                                          0)
+            arcade.draw_text("Press SPACE to play Again", (SCREEN_WIDTH / 2) - (SCREEN_WIDTH / 4) - 40, 315,
+                             arcade.color.WHITE, 50)
 
         # Call draw() on all your sprite lists below
 
